@@ -1,0 +1,4 @@
+colorlog==6.6.0
+python-dotenv==0.20.0
+cvg-python-sdk
+rasa-vier-cvg>=0.9.0

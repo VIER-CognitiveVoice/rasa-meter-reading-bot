@@ -1,0 +1,110 @@
+version: "3.1"
+
+nlu:
+- intent: greet
+  examples: |
+    - hi.
+    - hello.
+    - hello
+    - hallo
+    - good morning
+    - Guten Morgen
+    - good evening
+    - Guten Abend
+    - hey.
+    - hey
+    - good day
+    - guten Tag
+    - good afternoon
+    - Mein Zähler steht auf [12345678901](number)
+    - My counter is up to [12345678901](number)
+    - Mein Zählerstand ist [12345678901](number)
+    - My meter reading is [12345678901](number)
+    - [12345678901](number) ist mein Zählerstand
+    - [12345678901](number) is my meter reading
+    - Meine Zählernummer lautet [Z1234567890123456](meter_id)
+    - My meter number is [Z1234567890123456](meter_id)
+    - [H1234567890123456](meter_id) ist meine Zählernummer
+    - [H1234567890123456](meter_id) is my meter number
+    - Meine Kundennummer lautet [123456](customer_number)
+    - My customer number is [123456](customer_number)
+    - [123456](customer_number) ist meine Kundennummer
+    - [123456](customer_number) is my customer number
+    - Meine Zählernummer lautet [Z1234567890123456](meter_id) und meine Kundennummer ist [123456](customer_number)
+    - Hi. My customer number is [123456](customer_number).
+    - Hi. My meter number is [Z1234567890123456](meter_id).
+    - Hello. My customer number is [654321](customer_number) and my meter number is [E98478238](meter_id).
+    - Good morning. My customer number is [654678](customer_number) and my meter number is [B76210347](meter_id).
+    - Guten Morgen. Meine Kundennummer ist [654678](customer_number) und meine Ablesenummer ist [B76210347](meter_id).
+    - My meter reading is [1234](meter_reading).
+    - Mein Zählerstand ist [1234](meter_reading)
+    - My meter reading is [1234](meter_reading). My meter number is [B 76210347](meter_id).
+    - Mein Zählerstand ist [1234](meter_reading). Meine Ablesenummer ist [B 76210347](meter_id).
+    - Hi. My meter reading is [1234](meter_reading) and my customer number is [123456](customer_number).
+    - Hi. Mein Zählerstand ist [1234](meter_reading) und meine Kundennummer ist [123456](customer_number).
+    - [123456](customer_number).
+    - [123456](customer_number) ist meine Kundennummer.
+
+- intent: affirm
+  examples: |
+    - yes
+    - y
+    - indeed
+    - of course
+    - that sounds good
+    - correct
+    - Ja
+    - Ja habe Ich
+    - Die ist richtig
+    - in der Tat
+    - Natürlich
+    - Das klingt gut
+    - Das hört sich gut an
+    - Korrekt
+    - Jawohl
+    - Yes
+    - Yes I do
+    - That is correct
+    - Indeed
+    - Of course
+    - That sounds good
+
+- intent: deny
+  examples: |
+    - no
+    - n
+    - never
+    - I don't think so
+    - don't like that
+    - no way
+    - not really
+    - Nein
+    - Das habe ich nicht
+    - Das würde ich gerne korrigieren
+    - Das ist nicht richtig
+    - Das ist falsch
+    - Ich glaube nicht
+    - mag das nicht
+    - noch nie
+    - nein
+    - No
+    - No I don't
+    - I would like to correct that
+    - That is not correct
+    - That is wrong
+
+- regex: customer_number
+  examples: |
+    - \b\d{6}\b
+
+- regex: meter_reading
+  examples: |
+    - \b\d{1,5}\b
+
+- regex: number
+  examples: |
+    - \b\d{6,12}\b
+
+- regex: meter_id
+  examples: |
+    - \b[A-Za-z] ?[\d ]{8,16}\b

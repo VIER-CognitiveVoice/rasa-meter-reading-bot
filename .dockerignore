@@ -1,0 +1,10 @@
+Dockerfile
+docker-compose.yml
+README.md
+.gitignore
+.git/
+.vscode/
+.idea/
+venv/
+.dockerignore
+constraints.txt

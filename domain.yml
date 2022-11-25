@@ -1,0 +1,439 @@
+version: "3.1"
+
+intents:
+  - affirm
+  - deny
+  - cvg_session
+  - cvg_inactivity
+  - cvg_terminated
+  - cvg_error
+  - greet
+  - cvg_outbound_success
+  - cvg_outbound_failure
+
+entities:
+  - number
+  - cvg_body
+  - customer_number
+  - meter_id
+  - meter_reading
+  - language
+
+actions:
+  - action_cvg_outbound_success
+  - action_greet
+  - action_are_you_still_there
+  - action_detect_language
+  - validate_meter_reading_form
+  - action_meter_reading_form_submit
+  - action_ask_meter_reading_already_set
+
+slots:
+
+  language:
+    type: any
+    influence_conversation: false
+    mappings:
+    - type: custom
+      action: action_detect_language
+
+  cvg_bot_session_body:
+    type: any
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: cvg_body
+      intent: cvg_bot_session
+
+  inactivity_counter:
+    type: float
+    influence_conversation: false
+    initial_value: 0
+    mappings:
+    - type: custom
+
+  customer_number:
+    type: any
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: customer_number
+      conditions:
+      - active_loop: meter_reading_form
+        requested_slot: customer_number # TODO: You cannot overwrite customer number. This is a fundamental issue. The meter reading and customer number have the exact same format. A user who forgets the letter in the meter_id OR a misinterpretation would also lead to overwriting the customer number
+    - type: from_text
+      conditions:
+      - active_loop: meter_reading_form
+        requested_slot: customer_number
+
+  meter_id:
+    type: any
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: meter_id
+      conditions:
+      - active_loop: meter_reading_form
+    - type: from_text
+      conditions:
+      - active_loop: meter_reading_form
+        requested_slot: meter_id
+
+  meter_reading:
+    type: any
+    influence_conversation: false
+    mappings:
+    - type: from_entity
+      entity: meter_reading
+      conditions:
+      - active_loop: meter_reading_form
+        requested_slot: meter_reading
+    - type: from_entity
+      entity: number
+      conditions:
+      - active_loop: meter_reading_form
+        requested_slot: meter_reading
+    - type: from_text
+      conditions:
+      - active_loop: meter_reading_form
+        requested_slot: meter_reading
+
+  customer_number_correct:
+    type: bool
+    initial_value: null
+    influence_conversation: false
+    mappings:
+    - type: from_intent
+      intent: affirm
+      value: true
+      conditions:
+      - active_loop: meter_reading_form
+        requested_slot: customer_number_correct
+    - type: from_intent
+      intent: deny
+      value: false
+      conditions:
+      - active_loop: meter_reading_form
+        requested_slot: customer_number_correct
+
+  meter_reading_already_set:
+    type: bool
+    initial_value: null
+    influence_conversation: false
+    mappings:
+    - type: from_intent
+      intent: affirm
+      value: true
+      conditions:
+      - active_loop: meter_reading_form
+        requested_slot: meter_reading_already_set
+    - type: from_intent
+      intent: deny
+      value: false
+      conditions:
+      - active_loop: meter_reading_form
+        requested_slot: meter_reading_already_set
+
+  meter_id_correct_except_letter:
+    type: bool
+    initial_value: null
+    influence_conversation: false
+    mappings:
+    - type: from_intent
+      intent: affirm
+      value: true
+      conditions:
+      - active_loop: meter_reading_form
+        requested_slot: meter_id_correct_except_letter
+    - type: from_intent
+      intent: deny
+      value: false
+      conditions:
+      - active_loop: meter_reading_form
+        requested_slot: meter_id_correct_except_letter
+
+  meter_reading_too_large:
+    type: bool
+    initial_value: null
+    influence_conversation: false
+    mappings:
+    - type: from_intent
+      intent: affirm
+      value: true
+      conditions:
+      - active_loop: meter_reading_form
+        requested_slot: meter_reading_too_large
+    - type: from_intent
+      intent: deny
+      value: false
+      conditions:
+      - active_loop: meter_reading_form
+        requested_slot: meter_reading_too_large
+
+  meter_reading_confirmed:
+    type: bool
+    initial_value: null
+    influence_conversation: false
+    mappings:
+    - type: from_intent
+      intent: affirm
+      value: true
+      conditions:
+      - active_loop: meter_reading_form
+        requested_slot: meter_reading_confirmed
+    - type: from_intent
+      intent: deny
+      value: false
+      conditions:
+      - active_loop: meter_reading_form
+        requested_slot: meter_reading_confirmed
+
+  real_meter_id:
+    type: text
+    influence_conversation: false
+    mappings:
+    - type: custom
+
+responses:
+
+  utter_greet:
+    - condition:
+      - type: slot
+        name: language
+        value: en
+      text: "Welcome to the self-service for collecting your meter reading. Note, that this conversation is being recorded. To start, I need your customer number, your meter i d and your current meter reading."
+      custom:
+        cvg_call_recording_start:
+    - text: "Herzlich willkommen im Self-Service zur vollautomatischen Erfassung Ihres Zählerstandes. Diese Konversation wird aufgezeichnet. Um Ihren Zählerstand zu erfassen, benötige ich Ihre Kundennummer, Ihre Zählernummer und den aktuellen Zählerstand."
+      custom:
+        cvg_call_recording_start:
+
+  utter_forward_to_agent:
+    - condition:
+      - type: slot
+        name: language
+        value: en
+      custom:
+        cvg_call_say:
+          text: "OK. I will forward you to an employee. One moment please."
+        cvg_dialog_data:
+          data:
+            customerNumber: "{customer_number}"
+            meterId: "{meter_id}"
+            meterReading: "{meter_reading}"
+        cvg_call_forward:
+          destinationNumber: "+4969907362380"
+    - custom:
+        cvg_call_say:
+          text: "OK. Ich leite Sie nun zu einem Mitarbeiter weiter. Einen kleinen Moment bitte."
+        cvg_dialog_data:
+          data:
+            customerNumber: "{customer_number}"
+            meterId: "{meter_id}"
+            meterReading: "{meter_reading}"
+        cvg_call_forward:
+          destinationNumber: "+4969907362381"
+
+  utter_msg_you_inactive:
+    - condition:
+        - type: slot
+          name: language
+          value: en
+      text: "You were inactive."
+    - text: "Ich habe keine eingabe gehört."
+
+  utter_ask_customer_number:
+    - condition:
+        - type: slot
+          name: language
+          value: en
+      text: "Please share me your customer number."
+    - text: "Wie lautet Ihre Kundennummer?"
+
+  
+  utter_invalid_customer_number:
+    - condition:
+        - type: slot
+          name: language
+          value: en
+      text: "I am not able to find this customer number. The customer number consists of six digits."
+    - text: "Diese Kundennummer ist ungültig. Die Kundennummer besteht aus 6 zahlen."
+
+  utter_invalid_option:
+    - condition:
+        - type: slot
+          name: language
+          value: en
+      text: "I am not able to understand your option. Please say Yes or No"
+    - text: "Das habe ich nicht verstanden. Bitte sagen Sie ja oder nein"
+
+  utter_ask_customer_number_correct:
+    - condition:
+        - type: slot
+          name: language
+          value: en
+      text: "<speak>I couldn't find your customer number in our system. Have you entered it correctly?</speak>"
+    - text: "<speak>Ihre Kundennummer <say-as interpret-as=\"characters\">{customer_number}</say-as> konnte ich in unserem System leider nicht finden. Haben Sie die Kundennummer korrekt eingegeben?</speak>"
+
+  utter_ask_meter_id:
+    - condition:
+        - type: slot
+          name: language
+          value: en
+      text: "And now please share me your meter i d."
+    - text: "Und nun bitte die Zählernummer."
+
+  utter_ask_meter_reading_already_set:
+    - condition:
+        - type: slot
+          name: language
+          value: en
+      text: "Do you want to overwrite the meter reading for meter {meter_id} which is {meter_reading_cache}?"
+    - text: "Möchten Sie den Zählerstand {meter_reading_cache} für Zählernummer {meter_id} überschreiben?"
+
+  utter_ask_meter_id_correct_except_letter:
+    - condition:
+        - type: slot
+          name: language
+          value: en
+      text: '<speak>Do you mean the meter with the i d <say-as interpret-as="characters">{real_meter_id}</say-as>?</speak>'
+    - text: '<speak>Meinen Sie den Zähler mit der Nummer <say-as interpret-as="characters">{real_meter_id}</say-as>?</speak>'
+
+  utter_ask_meter_reading:
+    - condition:
+        - type: slot
+          name: language
+          value: en
+      text: "Please enter your meter reading. It only needs the digits before the comma."
+    - text: "Geben Sie bitte nun Ihren abgelesenen Zählerstand ein. Es reichen die Stellen vor dem Komma."
+
+  utter_meter_reading_too_small:
+    - condition:
+        - type: slot
+          name: language
+          value: en
+      text: "The meter reading cannot be smaller than last year's meter reading."
+    - text: "Der aktuelle Zählerstand darf nicht kleiner als der Zählerstand des Vorjahres sein."
+
+  utter_invalid_meter_reading:
+    - condition:
+        - type: slot
+          name: language
+          value: en
+      text: "The meter reading is invalid."
+    - text: "Der Zählerstand ist ungültig."
+  
+  utter_ask_meter_reading_too_large:
+    - condition:
+        - type: slot
+          name: language
+          value: en
+      text: "The meter reading you entered is not close to the expected consumption. Is the meter reading really {meter_reading} Kilo Watt hours?"
+    - text: "Der von Ihnen eingegebene Zählerstand weicht deutlich vom erwarteten Verbrauch ab. Beträgt der Zählerstand tatsächlich {meter_reading} Kilowattstunden?"
+
+  utter_ask_meter_reading_confirmed:
+    - condition:
+        - type: slot
+          name: language
+          value: en
+      text: '<speak>I received reading as <say-as interpret-as="characters">{meter_reading}</say-as> Kilo Watt hours. Is that correct?</speak>'
+    - text: '<speak>Ich habe folgenden Messwert als <say-as interpret-as="characters">{meter_reading}</say-as> Kilowattstunden erhalten. Ist das richtig?</speak>'
+
+  utter_goodbye:
+    - condition:
+        - type: slot
+          name: language
+          value: en
+      custom:
+        cvg_call_say:
+          text: "I hope you have a nice day!"
+        cvg_call_drop:
+    - custom:
+        cvg_call_say:
+          text: "Ich wünsche Ihnen noch einen schönen Tag!"
+        cvg_call_drop:
+
+  utter_msg_cannot_find_meter:
+    - condition:
+        - type: slot
+          name: language
+          value: en
+      text: '<speak>Sorry, we could not find the meter in your account. The meter number consists of a letter followed by 8 digits.</speak>'
+    - text: '<speak>Leider konnten wir die Zählernummer in Ihrem Account nicht finden. Die Zählernummer besteht aus einem Buchstaben gefolgt von 8 Ziffern.</speak>'
+
+  utter_meter_reading_same:
+    - condition:
+        - type: slot
+          name: language
+          value: en
+      text: <speak>All right. The counter reading <say-as interpret-as="characters">{meter_reading_cache}</say-as> remains.</speak>
+      custom:
+        cvg_call_say:
+          text: 'I hope you have a nice day!'
+          interpretAs: "TEXT"
+        cvg_call_drop:
+    - text: <speak>In Ordnung. Der Zählerstand <say-as interpret-as="characters">{meter_reading_cache}</say-as> bleibt bestehen.</speak>
+      custom:
+        cvg_call_say:
+          text: 'Ich wünsche Ihnen noch einen schönen Tag!'
+          interpretAs: "TEXT"
+        cvg_call_drop:
+
+  utter_successful_meter_reading:
+    - condition:
+        - type: slot
+          name: language
+          value: en
+      text: Thanks! I successfully recorded your meter reading.
+    - text: Vielen Dank! Ich konnte Ihren Zählerstand erfolgreich erfassen.
+
+  utter_something_wrong:
+    - condition:
+        - type: slot
+          name: language
+          value: en
+      text: Oops! Something went wrong. Please try again later!
+    - text: Ups! Da ist etwas schief gegangen. Bitte versuchen Sie es später erneut!
+
+  utter_cvg_error:
+    - condition:
+        - type: slot
+          name: language
+          value: en
+      text: <speak>Sorry, we could not process your request. Please try again later!</speak>
+      custom:
+        cvg_call_drop:
+    - text: <speak>Leider konnte die Abfrage nicht durchgeführt werden. Bitte versuchen Sie es später erneut!</speak>
+      custom:
+        cvg_call_drop:
+
+  utter_outbound_failure:
+    - condition: 
+        - type: slot
+          name: language
+          value: en
+      text: The call forward connection is failed
+    - text: Die Rufumleitungsverbindung ist fehlgeschlagen
+
+
+forms:
+  meter_reading_form:
+    ignored_intents:
+      - cvg_inactivity
+      - cvg_terminated
+      - cvg_error
+      - cvg_outbound_success
+      - cvg_outbound_failure
+    required_slots:
+      - customer_number
+      - customer_number_correct
+      - meter_id
+      - meter_id_correct_except_letter
+      - meter_reading_already_set
+      - meter_reading
+      - meter_reading_too_large
+      - meter_reading_confirmed
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true

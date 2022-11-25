@@ -1,0 +1,47 @@
+version: "3.1"
+
+rules:
+
+- rule: Call starts
+  steps:
+  - or:
+    - intent: cvg_session
+    - intent: greet
+  - action: utter_greet
+  - action: meter_reading_form
+  - active_loop: meter_reading_form
+
+- rule: Submit meter reading Form
+  condition:
+  - active_loop: meter_reading_form
+  steps:
+  - action: meter_reading_form
+  - active_loop: null
+  - slot_was_set:
+    - requested_slot: null
+  - action: action_meter_reading_form_submit
+
+- rule: Rule for cvg_terminated
+  steps:
+  - intent: cvg_terminated
+  - action: action_restart
+
+- rule: Rule for cvg_inactivity
+  steps:
+  - intent: cvg_inactivity
+  - action: action_are_you_still_there
+
+- rule: Rule for cvg_error
+  steps:
+  - intent: cvg_error
+  - action: utter_cvg_error
+
+- rule: Rule for cvg_outbound_success
+  steps:
+  - intent: cvg_outbound_success
+  - action: action_cvg_outbound_success
+
+- rule: Rule for cvg_outbound_failure
+  steps:
+  - intent: cvg_outbound_failure
+  - action: utter_outbound_failure

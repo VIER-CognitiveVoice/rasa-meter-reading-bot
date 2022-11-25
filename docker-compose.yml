@@ -1,0 +1,38 @@
+version: '3'
+
+x-credentials:
+  &credentials
+  DEFAULT_LANGUAGE: ${DEFAULT_LANGUAGE}
+  SUPPORTED_LANGUAGES: ${SUPPORTED_LANGUAGES}
+
+services:
+  rasa:
+    build: .
+    ports:
+      - "5005:5005"
+    volumes:
+      - .:/app
+    command: ["run", "--enable-api", "--cors", "*", "--debug"]
+    environment:
+      <<: *credentials
+    networks:
+      - rasa
+
+  rasa-action:
+    build: .
+    command:
+    - run
+    - actions
+    container_name: rasa-action
+    environment:
+      <<: *credentials
+    networks:
+    - rasa
+    ports:
+    - 5055:5055
+    user: 1000:1000
+    volumes:
+    - .:/app
+
+networks:
+  rasa:

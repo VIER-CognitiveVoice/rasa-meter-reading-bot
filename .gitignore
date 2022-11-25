@@ -1,0 +1,10 @@
+.idea/
+venv/
+models/
+.rasa/cache
+*.pyc
+story_graph.dot
+*.iml
+.env
+dev/
+results/

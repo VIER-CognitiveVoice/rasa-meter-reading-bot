@@ -29,9 +29,9 @@ To make it easy for you to get a very first experience we run this simple bot in
 
 ## Phone Numbers to call
 
-You can call this bot 
-* via +442045863834 or sip:+4972198619302@sip.cognitivevoice.io (English speaking bot)
-* via +4969907362501 or sip:+4969907362501@sip.cognitivevoice.io (German speaking bot)
+You can call this bot, use 
+* **+442045863834** or **sip:+4972198619302@sip.cognitivevoice.io** (English speaking bot)
+* **+4969907362501** or **sip:+4969907362501@sip.cognitivevoice.io** (German speaking bot)
 
 ## Some Hints for a Dialog
 

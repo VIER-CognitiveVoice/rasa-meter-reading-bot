@@ -37,23 +37,24 @@ You can call this bot
 
 You will be asked for a customer number.
 
-For the in memory storage (default), any **customer number which is 6 digits long and starts with a 4**, is a valid customer number. Take note of your customer number and select one of the following **meter ID**:
+For the in memory storage (default), each **customer number which is 6 digits long and starts with a 4**, is a valid customer number. Take note of your customer number and select one of the following **meter ID**:
 
   - **A39\<customer number>**
   - **B42\<customer number>**
 
 Replace \<customer number> with your noted customer number. And take note of the meter number.
 
-<div class="admonition note">
-<p class="admonition-title">Sample customer number and meter ID</p>
-<p>You can choose any 6-digit customer number starting with a 4. Just to give you an example: If you choose <b>456123</b> as a customer number you may enter <b>A39456123</b> or <b>B42456123</b> as meter ID.</p>
-</div>
+The first meter (starting with A39) has no meter reading set. It has a maximum difference of 2000 and the last year's meter reading is 1000.
 
-The first meter has no meter reading set. It has a maximum difference of 2000 and the last year's meter reading is 1000.
-
-The second meter has the reading, 38000 already set for the current year.
+The second meter (starting with B42) has the reading 38000 already set for the current year.
 
 You will also need a meter reading. You can play around with the numbers here and see what happens.
+
+## Sample input Data 
+
+If you choose **45 61 23** as a customer number you may enter **B42 45 61 23** as meter ID and **38751** as meter reading.
+Don't worry if the bot announces to transfer you to a human agent - for demo purposes we transfer you to another bot only.
+
 
 # Development: Build Voice Bots with Rasa running in your Infrastructure
 

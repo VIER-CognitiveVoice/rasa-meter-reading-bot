@@ -80,4 +80,4 @@ Voicify your existing Rasa bot or clone this repo to start. Have fun!
 
 # Contact us in case of any Questions
 
-Contact us via support@vier.ai. We are happy to learn about the great voice bots you build.
+Contact us via info@vier.ai. We are happy to learn about the great voice bots you build.

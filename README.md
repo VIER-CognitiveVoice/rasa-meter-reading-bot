@@ -27,15 +27,13 @@ The meter reading can have a maximum difference between the current reading and 
 
 To make it easy for you to get a very first experience we run this simple bot in our infrastructure. 
 
-## Ask us for Phone Numbers to call
+## Phone Numbers to call
 
 You can call this bot 
-* via PHONE_NUMBER or SIP_URI (English speaking bot)
-* via PHONE_NUMBER or SIP_URI (German speaking bot)
+* via +442045863834 or sip:+4972198619302@sip.cognitivevoice.io (English speaking bot)
+* via +4969907362501 or sip:+4969907362501@sip.cognitivevoice.io (German speaking bot)
 
-Ask our support, support@vier.ai, to get the phone number or SIP URI.
-
-## Some hints for a Dialog
+## Some Hints for a Dialog
 
 You will be asked for a customer number.
 
@@ -71,7 +69,7 @@ The [Bot API](https://cognitivevoice.io/specs/?urls.primaryName=Bot%20API%20(Cli
 
 Follow the instructions [here](https://cognitivevoice.io/docs/conversational-ai/conversational-ai-rasa.html).
 
-## Get your VIER CVG account and configure your Project in CVG
+## Get your VIER CVG Account and configure your Project in CVG
 
 Follow the instructions [here](https://cognitivevoice.io/docs/conversational-ai/conversational-ai-rasa.html#cvg).
 

@@ -14,7 +14,7 @@ Rasa is available in two editions: Rasa Open Source (free) and Rasa Enterprise (
 
 ## Demo Voice Bot
 
-To demonstrate how to build a voicebot with Rasa and VIER CVG we have built this little bot. This bot is designed to record the meter reading of a specific meter. For example, an electric meter or a water meter.
+To demonstrate how to build a voicebot with Rasa and VIER CVG we have built this little bot. This bot is designed to record the meter reading of a specific meter. For example, an electric meter or a water meter. Please note: This bot is just a little demo. Rasa (and CVG) is much more powerful, try it out yourself.
 
 This bot assumes that you as a customer are identified by a customer number and you can have multiple meters, which are identified by a meter number or meter id. 
 

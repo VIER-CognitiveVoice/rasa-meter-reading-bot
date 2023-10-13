@@ -1,4 +1,4 @@
-FROM docker.io/rasa/rasa:3.6.12-full
+FROM docker.io/rasa/rasa:3.3.1-full
 
 USER root
 COPY requirements.txt  /app/requirements.txt

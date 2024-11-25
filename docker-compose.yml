@@ -17,6 +17,8 @@ services:
       <<: *credentials
     networks:
       - rasa
+    cap_drop: ['ALL']
+    read_only: true
 
   rasa-action:
     build: .
@@ -33,6 +35,8 @@ services:
     user: 1000:1000
     volumes:
     - .:/app
+    cap_drop: ['ALL']
+    read_only: true
 
 networks:
   rasa:
